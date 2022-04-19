@@ -3,6 +3,7 @@
 # data-sets
 *ubyte
 *.gz
+*.jpg
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
