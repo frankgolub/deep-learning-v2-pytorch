@@ -1,5 +1,8 @@
 .github/**
 
+# checkpoint
+*.pth
+
 # data-sets
 *ubyte
 *.gz
