@@ -3,10 +3,14 @@
 # checkpoint
 *.pth
 
+# zip files
+*.zip
+
 # data-sets
 *ubyte
 *.gz
 *.jpg
+*.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
