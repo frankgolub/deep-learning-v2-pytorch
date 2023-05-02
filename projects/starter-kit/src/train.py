@@ -110,7 +110,7 @@ def optimize(data_loaders, model, optimizer, loss, n_epochs, save_path, interact
     # plateau
     # HINT: look here: 
     # https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
-    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[20,30,40], gamma=0.1) # YOUR CODE HERE
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[30,60,90], gamma=0.01) # YOUR CODE HERE
 
     for epoch in range(1, n_epochs + 1):
 
@@ -135,13 +135,23 @@ def optimize(data_loaders, model, optimizer, loss, n_epochs, save_path, interact
 
             # Save the weights to save_path
             # YOUR CODE HERE
-            torch.save(model.state_dict(), 'checkpoint_scratch.pth')
+            torch.save(model.state_dict(), save_path)
 
             valid_loss_min = valid_loss
 
         # Update learning rate, i.e., make a step in the learning rate scheduler
         # YOUR CODE HERE
         scheduler.step()
+
+        if epoch == n_epochs:
+            second_save_path = save_path.split('.')[0] + "_end_of_training." + save_path.split('.')[1]
+            torch.save({
+                'epoch': epoch,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'loss': loss,
+                'dataloader': data_loaders
+                }, second_save_path)
 
         # Log the losses and the current learning rate
         if interactive_tracking:

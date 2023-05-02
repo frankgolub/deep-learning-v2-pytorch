@@ -49,23 +49,31 @@ def get_data_loaders(
     data_transforms = {
         "train": transforms.Compose(
             # YOUR CODE HERE
-            [transforms.ToTensor(),
-            transforms.Resize(256),
-            transforms.CenterCrop(224),
+            [transforms.Resize(256),
+            transforms.RandomCrop(224), 
+            transforms.RandomHorizontalFlip(),
+            # transforms.GaussianBlur(kernel_size=(5, 9), sigma=(0.1, 5)), # https://pytorch.org/vision/main/auto_examples/plot_transforms.html#gaussianblur
+            transforms.ColorJitter(brightness=0.5, hue=0.3),
+            # transforms.RandomPerspective(distortion_scale=0.6, p=1.0),
+            transforms.RandomRotation(degrees=(0, 180)),
+            # transforms.RandomAffine(degrees=(30, 70), translate=(0.1, 0.3), scale=(0.5, 0.75)),
+            transforms.RandomInvert(),
+            # transforms.RandomPosterize(bits=2),
+            transforms.ToTensor(),
             transforms.Normalize((0.5,), (0.5,)),]
         ),
         "valid": transforms.Compose(
             # YOUR CODE HERE
-            [transforms.ToTensor(),
-            transforms.Resize(256),
+            [transforms.Resize(256),
             transforms.CenterCrop(224),
+            transforms.ToTensor(),
             transforms.Normalize((0.5,), (0.5,)),]
         ),
         "test": transforms.Compose(
             # YOUR CODE HERE
-            [transforms.ToTensor(),
-            transforms.Resize(256),
+            [transforms.Resize(256),
             transforms.CenterCrop(224),
+            transforms.ToTensor(),
             transforms.Normalize((0.5,), (0.5,)),]
         ),
     }
@@ -212,7 +220,7 @@ def test_data_loaders_keys(data_loaders):
 def test_data_loaders_output_type(data_loaders):
     # Test the data loaders
     dataiter = iter(data_loaders["train"])
-    images, labels = dataiter.next()
+    images, labels = next(dataiter)# dataiter.next()
 
     assert isinstance(images, torch.Tensor), "images should be a Tensor"
     assert isinstance(labels, torch.Tensor), "labels should be a Tensor"
@@ -222,7 +230,7 @@ def test_data_loaders_output_type(data_loaders):
 
 def test_data_loaders_output_shape(data_loaders):
     dataiter = iter(data_loaders["train"])
-    images, labels = dataiter.next()
+    images, labels = next(dataiter)# dataiter.next()
 
     assert len(images) == 2, f"Expected a batch of size 2, got size {len(images)}"
     assert (
