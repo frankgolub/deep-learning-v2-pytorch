@@ -33,36 +33,47 @@ class MyModel(nn.Module):
         # )
 
         # convolutional layer
+
+        first_conv_out_channels = 32
+        second_conv_out_channels = 64
+        third_conv_out_channels = 128 
+
         self.conv1 = nn.Conv2d(in_channels=3, 
-                               out_channels=64,
+                               out_channels=first_conv_out_channels,
                                kernel_size=3,
                                padding=1)
-        self.batch_norm1 = nn.BatchNorm2d(32)
+        # self.batch_norm1 = nn.BatchNorm2d(first_conv_out_channels)
         self.max1 = nn.MaxPool2d(kernel_size=(3, 3))
+        self.dropout1 = nn.Dropout(p=dropout)
 
-        self.conv2 = nn.Conv2d(in_channels=32, 
-                               out_channels=64,
+        self.conv2 = nn.Conv2d(in_channels=first_conv_out_channels, 
+                               out_channels=second_conv_out_channels,
                                kernel_size=3,
                                padding=1)
-        self.batch_norm2 = nn.BatchNorm2d(64)
+        self.batch_norm2 = nn.BatchNorm2d(second_conv_out_channels)
         self.max2 = nn.MaxPool2d(kernel_size=(3, 3))
+        self.dropout2 = nn.Dropout(p=dropout)
 
-        self.conv3 = nn.Conv2d(in_channels=64, 
-                               out_channels=128,
+        self.conv3 = nn.Conv2d(in_channels=second_conv_out_channels, 
+                               out_channels=third_conv_out_channels,
                                kernel_size=5,
                                padding=1)
-        self.batch_norm3 = nn.BatchNorm2d(128)
-        self.max2 = nn.MaxPool2d(kernel_size=(3, 3))        
-               
-        self.fc1 = nn.Linear(in_features=73728,
-                             out_features=4096*4)
-        self.batch_norm4 = nn.BatchNorm1d(4096*4)
-        self.dropout1 = nn.Dropout(p=dropout)
-        self.fc2 = nn.Linear(in_features=4096*4,
-                             out_features=4096)
-        self.batch_norm5 = nn.BatchNorm1d(4096)
-        self.dropout2 = nn.Dropout(p=dropout)
-        self.fc3 = nn.Linear(in_features=4096,
+        self.batch_norm3 = nn.BatchNorm2d(third_conv_out_channels)
+        self.max3 = nn.MaxPool2d(kernel_size=(3, 3)) 
+        self.dropout3 = nn.Dropout(p=dropout)       
+        
+        first_out_features = 1024
+        second_out_features = 256
+
+        self.fc1 = nn.Linear(in_features=6272,
+                             out_features=first_out_features)
+        self.batch_norm4 = nn.BatchNorm1d(first_out_features)
+        self.dropout4 = nn.Dropout(p=dropout)
+        self.fc2 = nn.Linear(in_features=first_out_features,
+                             out_features=second_out_features)
+        self.batch_norm5 = nn.BatchNorm1d(second_out_features)
+        self.dropout5 = nn.Dropout(p=dropout)
+        self.fc3 = nn.Linear(in_features=second_out_features,
                              out_features=num_classes) 
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -70,13 +81,14 @@ class MyModel(nn.Module):
         # feature extractor, the pooling and the final linear
         # layers (if appropriate for the architecture chosen)
 
-        x = self.dropout1(F.relu(self.max1(self.batch_norm1(self.conv1(x)))))
-        x = self.dropout2(F.relu(self.max2(self.batch_norm2(self.conv2(x)))))
+        x = F.relu(self.max1(self.conv1(x)))
+        x = F.relu(self.max2(self.batch_norm2(self.conv2(x))))
+        x = F.relu(self.max3(self.batch_norm3(self.conv3(x))))
 
         x = torch.flatten(x, 1)
 
-        x = self.dropout1(F.relu(self.batch_norm4(self.fc1(x))))
-        x = self.dropout2(F.relu(self.batch_norm5(self.fc2(x))))
+        x = self.dropout4(F.relu(self.batch_norm4(self.fc1(x))))
+        x = self.dropout5(F.relu(self.batch_norm5(self.fc2(x))))
         x = self.fc3(x)
         return x
 
