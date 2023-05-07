@@ -3,13 +3,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-# define the CNN architecture
-# The architecture of the following network comports with recommendations from the CS231 and the 
-# Pytorch classification example. Batch-norm could be used as a regularizer.
-# The pattern follows: INPUT -> [[CONV -> RELU]*N -> POOL?]*M -> [FC -> RELU]*K -> FC, with the recommendation
-# that K < 3, M > 0, and pooling in force. A filter size of 5 is sufficient to avoid zero-padding and fitting to 
-# a substantial number of zero's in hidden layers that are not representative of the image.
-
 # The cifar10_cnn_exercise.ipynb was specifically relied upon.
 
 class MyModel(nn.Module):

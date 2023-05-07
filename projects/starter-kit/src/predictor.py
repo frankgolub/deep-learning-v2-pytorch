@@ -30,12 +30,12 @@ class Predictor(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         with torch.no_grad():
             # 1. apply transforms
-            x  = # YOUR CODE HERE
+            x  = self.transforms(x)# YOUR CODE HERE
             # 2. get the logits
-            x  = # YOUR CODE HERE
+            x  = self.model(x)# YOUR CODE HERE
             # 3. apply softmax
             #    HINT: remmeber to apply softmax across dim=1
-            x  = # YOUR CODE HERE
+            x  = F.softmax(x, dim=1)# YOUR CODE HERE
 
             return x
 
@@ -90,7 +90,7 @@ def test_model_construction(data_loaders):
     model = MyModel(num_classes=3, dropout=0.3)
 
     dataiter = iter(data_loaders["train"])
-    images, labels = dataiter.next()
+    images, labels = next(dataiter) # dataiter.next()
 
     predictor = Predictor(model, class_names=['a', 'b', 'c'], mean=mean, std=std)
 
