@@ -52,12 +52,13 @@ def get_data_loaders(
             [transforms.Resize(256),
             transforms.RandomCrop(224), 
             transforms.RandomHorizontalFlip(),
+            transforms.RandomVerticalFlip(),
             # transforms.GaussianBlur(kernel_size=(5, 9), sigma=(0.1, 5)), # https://pytorch.org/vision/main/auto_examples/plot_transforms.html#gaussianblur
             transforms.ColorJitter(brightness=0.5, hue=0.3),
             # transforms.RandomPerspective(distortion_scale=0.6, p=1.0),
-            transforms.RandomRotation(degrees=(0, 180)),
+            # transforms.RandomRotation(degrees=(0, 180)),
             # transforms.RandomAffine(degrees=(30, 70), translate=(0.1, 0.3), scale=(0.5, 0.75)),
-            transforms.RandomInvert(),
+            # transforms.RandomInvert(),
             # transforms.RandomPosterize(bits=2),
             transforms.ToTensor(),
             transforms.Normalize((0.5,), (0.5,)),]
