@@ -19,8 +19,8 @@ def check_discriminator(discriminator: torch.nn.Module):
     print('Congrats, your discriminator implementation passed all the tests')
  
 
-def check_generator(generator: torch.nn.Module, latent_dim: int):
-    latent_vector = torch.randn(1, latent_dim, 1, 1)
+def check_generator(generator: torch.nn.Module, latent_dim: int, batch_size: int): # adds batch_size to test
+    latent_vector = torch.randn(batch_size, latent_dim, 1, 1) # changes batch_size from 1 to batch_size
     image = generator(latent_vector)
     assert image.shape == torch.Size([1, 3, 64, 64]), 'The generator should output a 64x64x3 images.'
     print('Congrats, your generator implementation passed all the tests')
